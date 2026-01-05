@@ -50,7 +50,7 @@ namespace CalendarioInstitucional.UI.Web.Controllers
             #region VISÃO SEMANAL
             if (tipo == CalendarioViewTipo.Semanal)
             {
-                var inicioSemana = dataBase.AddDays(-(int)dataBase.DayOfWeek + 1);
+                var inicioSemana = dataBase.AddDays(-(int)dataBase.DayOfWeek);
                 var fimSemana = inicioSemana.AddDays(6);
 
                 for (var d = inicioSemana; d <= fimSemana; d = d.AddDays(1))
@@ -63,11 +63,6 @@ namespace CalendarioInstitucional.UI.Web.Controllers
                                         e.DtFimEvento!.Value.Date >= d)
                             .ToList()
                     });
-                }
-
-                if (somenteComEventos)
-                {
-                    dias = dias.Where(d => d.Eventos.Any()).ToList();
                 }
 
                 return View(BuildViewModel(
@@ -110,12 +105,21 @@ namespace CalendarioInstitucional.UI.Web.Controllers
             #endregion
 
             #region VISÃO MENSAL
-            int totalDias = DateTime.DaysInMonth(dataBase.Year, dataBase.Month);
+            var primeiroDiaMes = new DateTime(dataBase.Year, dataBase.Month, 1);
+            var ultimoDiaMes = primeiroDiaMes.AddMonths(1).AddDays(-1);
+            int offsetInicio = (int)primeiroDiaMes.DayOfWeek;
 
-            for (int d = 1; d <= totalDias; d++)
+            for (int i = 0; i < offsetInicio; i++)
             {
-                var dia = new DateTime(dataBase.Year, dataBase.Month, d);
+                dias.Add(new CalendarioDiaViewMOD
+                {
+                    Data = null,
+                    Eventos = new List<EventoMOD>()
+                });
+            }
 
+            for (var dia = primeiroDiaMes; dia <= ultimoDiaMes; dia = dia.AddDays(1))
+            {
                 var eventosDoDia = eventos
                     .Where(e => e.DtInicioEvento!.Value.Date <= dia &&
                                 e.DtFimEvento!.Value.Date >= dia)
@@ -126,11 +130,6 @@ namespace CalendarioInstitucional.UI.Web.Controllers
                     Data = dia,
                     Eventos = eventosDoDia
                 });
-            }
-
-            if (somenteComEventos)
-            {
-                dias = dias.Where(d => d.Eventos.Any()).ToList();
             }
 
             return View(BuildViewModel(
