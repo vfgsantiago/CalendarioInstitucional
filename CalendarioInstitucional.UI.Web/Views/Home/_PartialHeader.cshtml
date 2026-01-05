@@ -23,20 +23,9 @@
                 </div>
             </div>
             <div class="col-md-4 col-12 text-start text-lg-end d-none d-lg-inline">
-                <img src="~/logo_unimed.png" class="header-logo shadow-sm" alt="Logo">
+                <img src="logo.png" class="header-logo shadow-sm" alt="Logo">
             </div>
         </div>
-    </div>
-    <div class="btn-group-sm filters mt-4">
-        <div class="filter-title">Modos de exibição do calendário</div>
-        <button class="btn btn-light rounded-3 @(Model.SomenteComEventos ? "" : "bg-primary text-white") mb-2 mb-md-0"
-                onclick="toggleDias(false)">
-            <i class="fas fa-calendar me-2"></i>Todos os dias
-        </button>
-        <button class="btn btn-light rounded-3 @(Model.SomenteComEventos ? "bg-primary text-white" : "")"
-                onclick="toggleDias(true)">
-            <i class="fas fa-filter me-2"></i>Somente dias com eventos
-        </button>
     </div>
     <div class="filters mt-4">
         <div class="filter-title">Filtros rápidos por categorias de eventos</div>

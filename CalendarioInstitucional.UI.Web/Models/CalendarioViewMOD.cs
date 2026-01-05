@@ -19,7 +19,7 @@ namespace CalendarioInstitucional.UI.Web.Models
     }
     public class CalendarioDiaViewMOD
     {
-        public DateTime Data { get; set; }
+        public DateTime? Data { get; set; }
         public List<EventoMOD> Eventos { get; set; } = new();
     }
     public enum CalendarioViewTipo

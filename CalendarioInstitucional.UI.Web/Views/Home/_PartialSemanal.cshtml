@@ -9,11 +9,14 @@
 <div class="calendar-week">
     @foreach (var dia in Model.DiasDoMes)
     {
-        <div class="day @(dia.Data.Date == DateTime.Today ? "day-highlight" : "")"
-             onclick="goToDay('@dia.Data.ToString("yyyy-MM-dd")')">
+        var hoje = dia.Data.Value.Date == DateTime.Today;
+        var fimDeSemana = dia.Data.Value.DayOfWeek == DayOfWeek.Saturday || dia.Data.Value.DayOfWeek == DayOfWeek.Sunday;
+
+        <div class="day @(hoje ? "day-highlight" : "") @(fimDeSemana ? "day-weekend" : "")"
+             onclick="goToDay('@dia.Data.Value.ToString("yyyy-MM-dd")')">
             <div class="day-header">
-                <span class="day-number-semana @(dia.Data.Date == DateTime.Today ? "text-green" : "")">@dia.Data.Day</span>
-                <span class="day-label-semana">@dia.Data.ToString("dddd")</span>
+                <span class="day-number-semana @(hoje ? "text-green" : "")">@dia.Data.Value.Day</span>
+                <span class="day-label-semana ">@dia.Data.Value.ToString("dddd")</span>
             </div>
             <div class="events">
                 @foreach (var evento in dia.Eventos)
