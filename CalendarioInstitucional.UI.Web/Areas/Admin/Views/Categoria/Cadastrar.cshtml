@@ -1,0 +1,108 @@
+﻿@model CategoriaViewMOD
+@{
+    ViewData["Title"] = "Cadastrar Nova Categoria";
+}
+
+<div class="container-fluid py-5 px-5">
+    <div class="bg-white rounded-4 border-0 shadow-sm px-5 pt-4 pb-2 mb-3">
+        <div class="row align-items-center">
+            <div class="col-6">
+                <h3 class="text-gray-dark"><i class="fas fa-plus-circle me-2"></i>Nova Categoria</h3>
+                <p class="text-gray">Preencha os campos abaixo para cadastrar a categoria</p>
+            </div>
+        </div>
+    </div>
+    <form asp-action="Cadastrar" asp-controller="Categoria" asp-area="Admin" method="post">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm rounded-4 border-0">
+                    <div class="card-body px-5 py-4">
+                        <div class="mb-4">
+                            <label asp-for="Categoria.TxTitulo" class="form-label fw-semibold">Título</label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-white"><i class="fas fa-bookmark"></i></span>
+                                <input asp-for="Categoria.TxTitulo" class="form-control" maxlength="50" required placeholder="Ex: Reunião, Feriado, Evento Acadêmico" />
+                            </div>
+                            <span asp-validation-for="Categoria.TxTitulo" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Categoria.TxDescricao" class="form-label fw-semibold">Descrição</label>
+                            <textarea asp-for="Categoria.TxDescricao" class="form-control shadow-sm" rows="3" maxlength="200" placeholder="Descreva o propósito desta categoria" required></textarea>
+                            <span asp-validation-for="Categoria.TxDescricao" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="bg-white rounded-4 px-5 pt-4 pb-2 shadow-sm">
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold d-block mb-2">Ícone</label>
+                        <input type="hidden" asp-for="Categoria.CdIcone" />
+                        <div class="icon-grid">
+                            @foreach (var icone in ViewBag.Icones)
+                            {
+                                var selecionado = Model.Categoria.CdIcone == icone.CdIcone ? "selected" : "";
+                                <div class="icon-card @selecionado shadow-sm" data-id="@icone.CdIcone">
+                                    <i class="@icone.TxIcone"></i>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold d-block mb-2">Cor</label>
+                        <input type="hidden" asp-for="Categoria.CdCor" />
+                        <div class="color-grid">
+                            @foreach (var cor in ViewBag.Cores)
+                            {
+                                var selecionado = Model.Categoria.CdCor == cor.CdCor ? "selected" : "";
+                                <div class="color-swatch @selecionado @cor.TxCor shadow-sm" data-id="@cor.CdCor" title="@cor.TxCor"></div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 px-3 pt-4 pb-2">
+                <h6 class="text-uppercase text-muted fw-semibold mb-3">Preview no Calendário</h6>
+                <div id="previewCategoria" class="calendar-preview shadow bg-gray-light">
+                    <div class="preview-header">
+                        <i id="previewIcone" class="fas fa-calendar"></i>
+                        <span id="previewTitulo">Título da Categoria</span>
+                    </div>
+                    <div id="previewDescricao" class="preview-subtitle">Evento no calendário</div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between mb-3">
+            <a asp-action="Index" class="btn btn-outline-gray btn-sm shadow-sm"><i class="fas fa-chevron-left me-1"></i>Voltar</a>
+            <button type="submit" class="btn bg-primary text-white btn-sm shadow-sm"><i class="fas fa-save me-2"></i>Cadastrar Nova Categoria</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(function () {
+         const atualizarPreview = () => {
+            const titulo = $('#Categoria_TxTitulo').val() || 'Título da Categoria';
+            const descricao = $('#Categoria_TxDescricao').val() || 'Descrição da Categoria';
+            $('#previewTitulo').text(titulo).attr('title', titulo);
+            $('#previewDescricao').text(descricao).attr('title', descricao);
+        };
+        $('#Categoria_TxTitulo, #Categoria_TxDescricao').on('keyup', atualizarPreview);
+        atualizarPreview();
+
+        $('.icon-card').on('click', function () {
+            $('.icon-card').removeClass('selected');
+            $(this).addClass('selected');
+            $('#previewIcone').attr('class', $(this).find('i').attr('class'));
+            $('#Categoria_CdIcone').val($(this).data('id'));
+        }).filter('.selected').click();
+
+        $('.color-swatch').on('click', function () {
+            $('.color-swatch').removeClass('selected');
+            $(this).addClass('selected');
+            var corClasse = $(this).attr('class').replace('color-swatch', '').replace('selected', '').trim();
+            $('#previewCategoria').removeClass(function (i, c) { return (c.match(/bg-\S+/g) || []).join(' '); }).addClass(corClasse);
+            $('#Categoria_CdCor').val($(this).data('id'));
+        }).filter('.selected').click();
+    });
+</script>

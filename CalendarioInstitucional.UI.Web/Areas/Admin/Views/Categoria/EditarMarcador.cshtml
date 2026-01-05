@@ -1,0 +1,93 @@
+﻿@model CategoriaViewMOD
+@{
+    ViewData["Title"] = "Editar Marcador da Categoria";
+}
+
+<div class="container-fluid py-5 px-5">
+    <div class="bg-white rounded-4 border-0 shadow-sm px-5 pt-4 pb-2 mb-3">
+        <div class="row align-items-center">
+            <div class="col-6">
+                <h3 class="text-gray-dark"><i class="fas fa-certificate me-2"></i>Editar Marcador</h3>
+                <p class="text-gray">Altere o ícone e a cor da categoria. Veja o preview à direita em tempo real.</p>
+            </div>
+            <div class="col-6 text-end">
+                <h5>
+                    <span class="badge rounded-pill bg-primary px-4 py-2 shadow-sm">
+                        @Model.Categoria.TxTitulo
+                    </span>
+                </h5>
+            </div>
+        </div>
+    </div>
+    <form asp-action="EditarMarcador" asp-controller="Categoria" asp-area="Admin" method="post">
+        <input type="hidden" asp-for="Categoria.CdCategoria" />
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm rounded-4 border-0">
+                    <div class="card-body px-5 py-4">
+                        <p class="text-gray">Selecione o novo ícone e a nova cor da categoria.</p>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold d-block mb-2">Ícone</label>
+                            <input type="hidden" asp-for="Categoria.CdIcone" />
+                            <div class="icon-grid">
+                                @foreach (var icone in ViewBag.Icones)
+                                {
+                                    var selecionado = Model.Categoria.CdIcone == icone.CdIcone ? "selected" : "";
+                                    <div class="icon-card @selecionado shadow-sm" data-id="@icone.CdIcone">
+                                        <i class="@icone.TxIcone"></i>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold d-block mb-2">Cor</label>
+                            <input type="hidden" asp-for="Categoria.CdCor" />
+                            <div class="color-grid">
+                                @foreach (var cor in ViewBag.Cores)
+                                {
+                                    var selecionado = Model.Categoria.CdCor == cor.CdCor ? "selected" : "";
+                                    <div class="color-swatch @selecionado @cor.TxCor shadow-sm" data-id="@cor.CdCor" title="@cor.TxCor"></div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 px-3 pt-4 pb-2">
+                <h6 class="text-uppercase text-muted fw-semibold mb-3">Preview no Calendário</h6>
+                <div id="previewCategoria" class="calendar-preview shadow @Model.Categoria.TxCor">
+                    <div class="preview-header">
+                        <i id="previewIcone" class="@Model.Categoria.TxIcone"></i>
+                        <span id="previewTitulo">@Model.Categoria.TxTitulo</span>
+                    </div>
+                    <div class="preview-subtitle">@Model.Categoria.TxDescricao</div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-outline-gray btn-sm shadow-sm"><i class="fas fa-chevron-left me-1"></i>Voltar</a>
+            <button type="submit" class="btn bg-primary text-white btn-sm shadow-sm"><i class="fas fa-save me-2"></i>Salvar Alterações</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('.icon-card').on('click', function () {
+                $('.icon-card').removeClass('selected');
+                $(this).addClass('selected');
+                $('#previewIcone').attr('class', $(this).find('i').attr('class'));
+                $('#Categoria_CdIcone').val($(this).data('id'));
+            }).filter('.selected').click();
+
+            $('.color-swatch').on('click', function () {
+                $('.color-swatch').removeClass('selected');
+                $(this).addClass('selected');
+                var corClasse = $(this).attr('class').replace('color-swatch', '').replace('selected', '').trim();
+                $('#previewCategoria').removeClass(function (i, c) { return (c.match(/bg-\S+/g) || []).join(' '); }).addClass(corClasse);
+                $('#Categoria_CdCor').val($(this).data('id'));
+            }).filter('.selected').click();
+        });
+    </script>
+}

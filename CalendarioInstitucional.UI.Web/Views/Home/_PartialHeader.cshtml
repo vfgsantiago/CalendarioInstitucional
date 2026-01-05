@@ -1,0 +1,61 @@
+﻿@model CalendarioViewMOD
+
+@{
+    var categoriasSelecionadas =
+        Context.Request.Query["categorias"]
+               .ToString()
+               .Split(',', StringSplitOptions.RemoveEmptyEntries)
+               .ToList();
+}
+
+<div class="sidebar bg-white rounded-4 p-4 h-100 shadow">
+    <div class="sidebar-header mb-3">
+        <div class="row">
+            <div class="col-12 d-lg-none d-inline mb-3">
+                <img src="~/logo_unimed.png" class="header-logo shadow-sm" alt="Logo">
+            </div>
+            <div class="col-md-8 col-12">
+                <h2 class="text-gray-dark">
+                    <i class="fas fa-calendar-check me-3"></i>Calendário Institucional
+                </h2>
+                <div class="sidebar-subtitle text-gray">
+                    Use este calendário como base única de planejamento corporativo.
+                </div>
+            </div>
+            <div class="col-md-4 col-12 text-start text-lg-end d-none d-lg-inline">
+                <img src="~/logo_unimed.png" class="header-logo shadow-sm" alt="Logo">
+            </div>
+        </div>
+    </div>
+    <div class="btn-group-sm filters mt-4">
+        <div class="filter-title">Modos de exibição do calendário</div>
+        <button class="btn btn-light rounded-3 @(Model.SomenteComEventos ? "" : "bg-primary text-white") mb-2 mb-md-0"
+                onclick="toggleDias(false)">
+            <i class="fas fa-calendar me-2"></i>Todos os dias
+        </button>
+        <button class="btn btn-light rounded-3 @(Model.SomenteComEventos ? "bg-primary text-white" : "")"
+                onclick="toggleDias(true)">
+            <i class="fas fa-filter me-2"></i>Somente dias com eventos
+        </button>
+    </div>
+    <div class="filters mt-4">
+        <div class="filter-title">Filtros rápidos por categorias de eventos</div>
+        <div class="filter-group">
+            @foreach (var categoria in Model.Categorias)
+            {
+                var isChecked =
+                !categoriasSelecionadas.Any() ||
+                categoriasSelecionadas.Contains(categoria.CdCategoria.ToString());
+                <label class="filter-chip">
+                    <input type="checkbox"
+                           class="filter-category"
+                           value="@categoria.CdCategoria"
+                           @(isChecked ? "checked" : "") />
+                    <span class="badge filter-badge badge-soft @categoria.TxCor px-3 py-1">
+                        <i class="@categoria.TxIcone me-2"></i>@categoria.TxTitulo
+                    </span>
+                </label>
+            }
+        </div>
+    </div>
+</div>
